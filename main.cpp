@@ -9,10 +9,6 @@ const int blueLed = 13;
 
 ESP8266WebServer server(80);
 
-void handleRoot() {
-    server.send(200, "text/html", "<h1>Hello world from esp!</h1>");
-}
-
 void homePage() {
   String webpage =
   "<!DOCTYPE html>\
@@ -142,47 +138,42 @@ server.send(200, "text/html", webpage);
 }
 
 void redSwitch() {
-  digitalWrite(redLed, !digitalRead(redLed));
-  server.send(200, "text/html", "ok");
+    digitalWrite(redLed, !digitalRead(redLed));
+    server.send(200, "text/html", "ok");
 }
 
 void greenSwitch() {
-  digitalWrite(greenLed, !digitalRead(greenLed));
-  server.send(200, "text/html", "ok");
+    digitalWrite(greenLed, !digitalRead(greenLed));
+    server.send(200, "text/html", "ok");
 }
 
 void blueSwitch() {
-  digitalWrite(blueLed, !digitalRead(blueLed));
-  server.send(200, "text/html", "ok");
+    digitalWrite(blueLed, !digitalRead(blueLed));
+    server.send(200, "text/html", "ok");
 }
 
-const char* ssid = "GoodLine-9056";
-const char* pass = "2203631427";
-
 void setup() {
-  pinMode(redLed, OUTPUT);
-  pinMode(greenLed, OUTPUT);
-  pinMode(blueLed, OUTPUT);
-  digitalWrite(redLed, LOW);
-  digitalWrite(greenLed, LOW);
-  digitalWrite(blueLed, LOW);
-  Serial.begin(115200);
+    pinMode(redLed, OUTPUT);
+    pinMode(greenLed, OUTPUT);
+    pinMode(blueLed, OUTPUT);
+    
+    digitalWrite(redLed, LOW);
+    digitalWrite(greenLed, LOW);
+    digitalWrite(blueLed, LOW);
+    
+    Serial.begin(115200);
 
-  WiFi.begin(ssid, pass);
-
-    while (WiFi.status() != WL_CONNECTED) {
-        delay(500);
-        Serial.print(".");
-    }
-    Serial.println("\nConnected to WiFi");
+    WiFi.mode(WIFI_AP);
+    WiFi.softAP("esp-12f", "testtest");
+    
     Serial.print("IP address: ");
-    Serial.println(WiFi.localIP());
+    Serial.println(WiFi.softAPIP());
 
-    server.on("/", handleRoot);
-    server.on("/home", homePage);
+    server.on("/", homePage);
     server.on("/red_switch", redSwitch);
     server.on("/green_switch", greenSwitch);
     server.on("/blue_switch", blueSwitch);
+    
     server.begin();
     Serial.println("HTTP server started");
 }
